@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis Interactivo de Proof of Stake (POS)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Tech Neutral (Slate, Indigo) -->
+    <!-- Application Structure Plan: Se ha diseñado una SPA (Single-Page Application) con una estructura de navegación lateral fija y contenido principal desplazable. Esta arquitectura abandona el formato lineal de diapositivas en favor de una exploración no lineal por temas (Introducción, Cómo Funciona, Arquitectura, Comparativa, Ecosistema). Se eligió esta estructura porque permite a los usuarios saltar directamente a la información de su interés, facilitando una comprensión más rápida y personalizada. Las interacciones clave incluyen un diagrama de pasos dinámico y gráficos comparativos para transformar datos estáticos en experiencias de aprendizaje activas. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Funcionamiento del POS (5 pasos). -> Goal: Explicar Proceso. -> Viz/Method: Diagrama interactivo con HTML/CSS/JS. Interaction: Clic en cada paso revela su descripción detallada. -> Justification: Mucho más atractivo y memorable que una tabla estática. -> Library/Method: Vanilla JS.
+        - Report Info: Comparación POS vs. POW. -> Goal: Comparar. -> Viz/Method: Gráfico de barras horizontal. -> Interaction: Tooltips de Chart.js al pasar el cursor. -> Justification: Visualiza el drástico contraste en energía y escalabilidad de forma inmediata y clara. -> Library/Method: Chart.js.
+        - Report Info: Detalles de Nodos, Bloques, Implementaciones. -> Goal: Informar/Organizar. -> Viz/Method: Tarjetas de contenido estructuradas con Tailwind CSS. -> Interaction: Ninguna, enfoque en la legibilidad. -> Justification: Organiza información densa de manera limpia y escaneable. -> Library/Method: HTML/Tailwind.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* slate-50 */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 450px;
+            }
+        }
+        .nav-link.active {
+            background-color: #e0e7ff; /* indigo-100 */
+            color: #3730a3; /* indigo-800 */
+            font-weight: 600;
+        }
+        .step-item.active {
+            border-color: #4f46e5; /* indigo-600 */
+            background-color: #eef2ff; /* indigo-50 */
+        }
+    </style>
+</head>
+<body class="text-slate-700">
+
+    <div class="min-h-screen lg:flex">
+        <!-- Barra de Navegación Lateral (Visible en LG) -->
+        <nav class="hidden lg:block w-64 flex-shrink-0 bg-white border-r border-slate-200 p-4">
+            <div class="sticky top-4">
+                <h2 class="text-lg font-bold text-slate-800 mb-4">Explorar POS</h2>
+                <ul id="desktop-nav" class="space-y-2">
+                    <li><a href="#introduccion" class="nav-link block w-full text-left px-4 py-2 rounded-md text-slate-600 hover:bg-slate-100 transition-colors duration-200">Introducción</a></li>
+                    <li><a href="#funcionamiento" class="nav-link block w-full text-left px-4 py-2 rounded-md text-slate-600 hover:bg-slate-100 transition-colors duration-200">¿Cómo Funciona?</a></li>
+                    <li><a href="#arquitectura" class="nav-link block w-full text-left px-4 py-2 rounded-md text-slate-600 hover:bg-slate-100 transition-colors duration-200">Arquitectura Técnica</a></li>
+                    <li><a href="#comparativa" class="nav-link block w-full text-left px-4 py-2 rounded-md text-slate-600 hover:bg-slate-100 transition-colors duration-200">Análisis Comparativo</a></li>
+                    <li><a href="#ecosistema" class="nav-link block w-full text-left px-4 py-2 rounded-md text-slate-600 hover:bg-slate-100 transition-colors duration-200">Ecosistema y Usos</a></li>
+                    <li><a href="#profundiza" class="nav-link block w-full text-left px-4 py-2 rounded-md text-slate-600 hover:bg-slate-100 transition-colors duration-200">Profundiza</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Contenido Principal -->
+        <main class="flex-1 p-4 sm:p-6 lg:p-8">
+            <!-- Header y Navegación Móvil -->
+            <header class="lg:hidden mb-6">
+                <div class="flex justify-between items-center">
+                    <h1 class="text-2xl font-bold text-slate-900">Análisis de Proof of Stake</h1>
+                    <select id="mobile-nav" class="bg-white border border-slate-300 rounded-md p-2">
+                        <option value="introduccion">Introducción</option>
+                        <option value="funcionamiento">¿Cómo Funciona?</option>
+                        <option value="arquitectura">Arquitectura</option>
+                        <option value="comparativa">Comparativa</option>
+                        <option value="ecosistema">Ecosistema</option>
+                        <option value="profundiza">Profundiza</option>
+                    </select>
+                </div>
+            </header>
+
+            <!-- Sección 1: Introducción -->
+            <section id="introduccion" class="mb-16">
+                <div class="max-w-4xl mx-auto">
+                    <div class="bg-indigo-600 text-white rounded-xl p-8 mb-8 text-center shadow-lg">
+                        <h1 class="text-4xl font-bold mb-2">Proof of Stake (POS)</h1>
+                        <p class="text-xl text-indigo-200">Un Análisis Profundo de su Arquitectura, Seguridad y Escalabilidad</p>
+                    </div>
+                    
+                    <h2 class="text-3xl font-bold text-slate-800 mb-4">Fundamentos del Consenso en Blockchain</h2>
+                    <p class="text-lg mb-6">Un mecanismo de consenso es el motor que permite a una red descentralizada como una blockchain operar de forma segura y fiable. Es el conjunto de reglas que asegura que todos los participantes estén de acuerdo sobre el estado de la red, previniendo fraudes como el doble gasto y garantizando la integridad de los datos sin necesidad de una autoridad central. Es la base de la confianza en un sistema descentralizado.</p>
+                    <div class="grid md:grid-cols-3 gap-6 text-center">
+                        <div class="bg-white p-6 rounded-lg shadow-md border border-slate-200">
+                            <h3 class="font-bold text-indigo-600 text-lg mb-2">Previene el Doble Gasto</h3>
+                            <p class="text-sm">Asegura que una misma moneda digital no pueda ser gastada dos veces.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-md border border-slate-200">
+                            <h3 class="font-bold text-indigo-600 text-lg mb-2">Garantiza la Integridad</h3>
+                            <p class="text-sm">Mantiene la consistencia y el orden cronológico de las transacciones.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-md border border-slate-200">
+                            <h3 class="font-bold text-indigo-600 text-lg mb-2">Permite la Descentralización</h3>
+                            <p class="text-sm">Elimina la necesidad de intermediarios o autoridades centrales.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sección 2: Funcionamiento -->
+            <section id="funcionamiento" class="mb-16">
+                <div class="max-w-4xl mx-auto">
+                    <h2 class="text-3xl font-bold text-slate-800 mb-4 text-center">¿Cómo Funciona el Ciclo de POS?</h2>
+                    <p class="text-lg text-center mb-8">Proof of Stake opera a través de un ciclo continuo donde los validadores son seleccionados para crear bloques basados en la cantidad de criptomoneda que han "apostado" o bloqueado como garantía. Haz clic en cada paso para explorar el proceso en detalle.</p>
+                    
+                    <div class="lg:flex lg:space-x-8">
+                        <!-- Pasos -->
+                        <div class="lg:w-1/3 mb-8 lg:mb-0">
+                            <div id="steps-container" class="space-y-4">
+                                <button data-step="1" class="step-item w-full text-left p-4 border-2 border-slate-200 rounded-lg transition-all duration-200">
+                                    <span class="font-bold text-indigo-700">Paso 1:</span> Staking
+                                </button>
+                                <button data-step="2" class="step-item w-full text-left p-4 border-2 border-slate-200 rounded-lg transition-all duration-200">
+                                    <span class="font-bold text-indigo-700">Paso 2:</span> Selección
+                                </button>
+                                <button data-step="3" class="step-item w-full text-left p-4 border-2 border-slate-200 rounded-lg transition-all duration-200">
+                                    <span class="font-bold text-indigo-700">Paso 3:</span> Validación
+                                </button>
+                                <button data-step="4" class="step-item w-full text-left p-4 border-2 border-slate-200 rounded-lg transition-all duration-200">
+                                    <span class="font-bold text-indigo-700">Paso 4:</span> Recompensas
+                                </button>
+                                <button data-step="5" class="step-item w-full text-left p-4 border-2 border-slate-200 rounded-lg transition-all duration-200">
+                                    <span class="font-bold text-indigo-700">Paso 5:</span> Sanciones (Slashing)
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Descripciones -->
+                        <div class="lg:w-2/3">
+                            <div id="descriptions-container" class="bg-white p-6 rounded-lg shadow-md border border-slate-200 min-h-[200px]">
+                                <div id="step-desc-1" class="step-description">
+                                    <h3 class="text-xl font-bold text-slate-800 mb-2">1. Staking</h3>
+                                    <p>Los usuarios que desean participar como validadores bloquean una cantidad mínima de la criptomoneda nativa de la red en un contrato inteligente. Ejemplo: 32 ETH en Ethereum. Este capital actúa como una garantía ("skin in the game") que incentiva el comportamiento honesto.</p>
+                                </div>
+                                <div id="step-desc-2" class="step-description hidden">
+                                    <h3 class="text-xl font-bold text-slate-800 mb-2">2. Selección</h3>
+                                    <p>El protocolo selecciona a un validador para proponer el siguiente bloque. La selección es pseudoaleatoria, pero está ponderada: a mayor stake, mayor probabilidad de ser elegido. Se emplean algoritmos sofisticados para prevenir que los validadores más ricos monopolicen la creación de bloques.</p>
+                                </div>
+                                <div id="step-desc-3" class="step-description hidden">
+                                    <h3 class="text-xl font-bold text-slate-800 mb-2">3. Validación</h3>
+                                    <p>El validador elegido recopila transacciones pendientes, verifica su validez (firmas, fondos, etc.) y las empaqueta en un nuevo bloque. Luego, propone este bloque al resto de la red para que sea confirmado por otros validadores (llamados atestadores).</p>
+                                </div>
+                                <div id="step-desc-4" class="step-description hidden">
+                                    <h3 class="text-xl font-bold text-slate-800 mb-2">4. Recompensas</h3>
+                                    <p>Si el bloque es aceptado y añadido a la cadena, el validador proponente recibe una recompensa. Esta suele consistir en las comisiones de las transacciones incluidas en el bloque y, en algunos casos, nuevos tokens creados por el protocolo.</p>
+                                </div>
+                                <div id="step-desc-5" class="step-description hidden">
+                                    <h3 class="text-xl font-bold text-slate-800 mb-2">5. Sanciones (Slashing)</h3>
+                                    <p>Si un validador actúa de forma maliciosa (ej. propone un bloque inválido, intenta un doble gasto) o está inactivo por mucho tiempo, el protocolo activa el "slashing". Este mecanismo de penalización le quita una porción o la totalidad de su stake, que es quemado o redistribuido.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+             <!-- Sección 3: Arquitectura Técnica -->
+             <section id="arquitectura" class="mb-16">
+                <div class="max-w-4xl mx-auto">
+                    <h2 class="text-3xl font-bold text-slate-800 mb-4 text-center">Arquitectura Técnica de POS</h2>
+                    <p class="text-lg text-center mb-8">Para entender POS a fondo, es crucial conocer sus dos componentes fundamentales: los nodos que mantienen la red y los bloques que registran la información. Esta sección desglosa la anatomía de cada uno.</p>
+                    <div class="grid md:grid-cols-1 lg:grid-cols-2 gap-8">
+                        <article class="bg-white p-6 rounded-lg shadow-md border border-slate-200">
+                            <h3 class="text-2xl font-bold text-slate-800 mb-4">Anatomía de un Nodo</h3>
+                            <p class="mb-4">Un nodo es una computadora que participa en la red, mantiene una copia de la blockchain y valida transacciones. Sus componentes clave son:</p>
+                            <ul class="space-y-3">
+                                <li class="flex items-start"><span class="bg-indigo-100 text-indigo-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full mt-1">Software Cliente</span> La aplicación que implementa las reglas del protocolo.</li>
+                                <li class="flex items-start"><span class="bg-indigo-100 text-indigo-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full mt-1">Base de Datos</span> Almacena el historial completo de transacciones.</li>
+                                <li class="flex items-start"><span class="bg-indigo-100 text-indigo-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full mt-1">Comunicación P2P</span> Permite la sincronización con otros nodos.</li>
+                                <li class="flex items-start"><span class="bg-indigo-100 text-indigo-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full mt-1">Wallet</span> Gestiona el stake y las claves del validador.</li>
+                            </ul>
+                        </article>
+                        <article class="bg-white p-6 rounded-lg shadow-md border border-slate-200">
+                            <h3 class="text-2xl font-bold text-slate-800 mb-4">Estructura de un Bloque</h3>
+                            <p class="mb-4">Un bloque es un contenedor de datos que agrupa transacciones validadas. Se divide en:</p>
+                            <ul class="space-y-3">
+                                <li class="flex items-start"><span class="bg-green-100 text-green-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full mt-1">Header</span> Contiene metadatos como el hash del bloque anterior, timestamp y el ID del validador.</li>
+                                <li class="flex items-start"><span class="bg-green-100 text-green-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full mt-1">Cuerpo</span> Incluye la lista de transacciones, atestaciones y la firma digital del validador.</li>
+                            </ul>
+                        </article>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sección 4: Comparativa -->
+            <section id="comparativa" class="mb-16">
+                <div class="max-w-4xl mx-auto">
+                    <h2 class="text-3xl font-bold text-slate-800 mb-4 text-center">Análisis Comparativo</h2>
+                    <p class="text-lg text-center mb-8">Una de las mejores maneras de entender las fortalezas de POS es comparándolo directamente con su predecesor, Proof of Work (POW). El gráfico a continuación ilustra las diferencias más significativas.</p>
+
+                    <div class="bg-white p-6 rounded-lg shadow-md border border-slate-200 mb-12">
+                         <h3 class="text-xl font-bold text-slate-800 mb-4 text-center">POS vs. POW: Métricas Clave</h3>
+                        <div class="chart-container">
+                            <canvas id="posVsPowChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <h3 class="text-2xl font-bold text-slate-800 mb-4 text-center">Tabla Comparativa Detallada</h3>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white rounded-lg shadow-md border border-slate-200">
+                            <thead class="bg-slate-50">
+                                <tr>
+                                    <th class="p-4 text-left font-semibold text-slate-600">Característica</th>
+                                    <th class="p-4 text-left font-semibold text-indigo-600">Proof of Stake (POS)</th>
+                                    <th class="p-4 text-left font-semibold text-slate-600">Proof of Work (POW)</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-200">
+                                <tr><td class="p-4 font-bold">Método</td><td class="p-4">Validadores elegidos por stake</td><td class="p-4">Mineros compiten resolviendo puzzles</td></tr>
+                                <tr><td class="p-4 font-bold">Recurso</td><td class="p-4">Capital (criptomonedas)</td><td class="p-4">Poder computacional (energía)</td></tr>
+                                <tr><td class="p-4 font-bold">Energía</td><td class="p-4">Muy bajo</td><td class="p-4">Extremadamente alto</td></tr>
+                                <tr><td class="p-4 font-bold">Hardware</td><td class="p-4">De consumo general</td><td class="p-4">Especializado y caro (ASICs)</td></tr>
+                                <tr><td class="p-4 font-bold">Escalabilidad</td><td class="p-4">Generalmente más alta (más TPS)</td><td class="p-4">Limitada por la dificultad</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sección 5: Ecosistema y Casos de Uso -->
+            <section id="ecosistema" class="mb-16">
+                 <div class="max-w-4xl mx-auto">
+                    <h2 class="text-3xl font-bold text-slate-800 mb-4 text-center">Ecosistema y Casos de Uso</h2>
+                    <p class="text-lg text-center mb-8">POS no es solo una teoría; es la tecnología que impulsa a algunas de las blockchains más innovadoras. Su eficiencia y escalabilidad habilitan una nueva generación de aplicaciones descentralizadas.</p>
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="bg-white p-6 rounded-lg shadow-md border border-slate-200">
+                            <h3 class="font-bold text-lg mb-2 text-indigo-600">Ethereum</h3>
+                            <p class="text-sm">Con su transición a POS, Ethereum ha reducido su consumo energético en ~99.95% y ha sentado las bases para futuras mejoras de escalabilidad, consolidando su posición como líder en contratos inteligentes.</p>
+                        </div>
+                         <div class="bg-white p-6 rounded-lg shadow-md border border-slate-200">
+                            <h3 class="font-bold text-lg mb-2 text-indigo-600">Cardano</h3>
+                            <p class="text-sm">Diseñada desde cero con un enfoque académico riguroso en POS a través de su protocolo Ouroboros, priorizando la seguridad y la sostenibilidad a largo plazo.</p>
+                        </div>
+                         <div class="bg-white p-6 rounded-lg shadow-md border border-slate-200">
+                            <h3 class="font-bold text-lg mb-2 text-indigo-600">Polkadot</h3>
+                            <p class="text-sm">Utiliza Nominated POS (NPoS) para maximizar la seguridad de la red y permitir la interoperabilidad entre múltiples blockchains de una manera eficiente y segura.</p>
+                        </div>
+                    </div>
+                     <h3 class="text-2xl font-bold text-slate-800 mt-12 mb-4 text-center">Casos de Uso Reales</h3>
+                     <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-white p-6 rounded-lg shadow-md border border-slate-200">
+                            <h4 class="font-bold text-lg mb-2">Finanzas Descentralizadas (DeFi)</h4>
+                            <p>Plataformas de préstamos, exchanges y yield farming que requieren confirmaciones rápidas y de bajo costo.</p>
+                        </div>
+                         <div class="bg-white p-6 rounded-lg shadow-md border border-slate-200">
+                            <h4 class="font-bold text-lg mb-2">NFTs y Gaming</h4>
+                            <p>Mercados y juegos en blockchain que se benefician de las bajas comisiones para la creación y el comercio de activos digitales.</p>
+                        </div>
+                     </div>
+                </div>
+            </section>
+
+            <!-- Sección 6: Profundiza -->
+            <section id="profundiza" class="mb-16">
+                 <div class="max-w-4xl mx-auto text-center">
+                    <h2 class="text-3xl font-bold text-slate-800 mb-4">Profundiza tu Conocimiento</h2>
+                    <p class="text-lg mb-8">POS es un campo en constante evolución. El siguiente video ofrece una excelente explicación visual para complementar lo que has aprendido hoy. Además, nuestras conclusiones resumen por qué POS es tan crucial para el futuro de la web descentralizada.</p>
+                    <div class="bg-white p-6 rounded-lg shadow-md border border-slate-200 mb-8">
+                        <h3 class="text-xl font-bold mb-4">Recurso Visual Recomendado</h3>
+                        <p class="mb-4">Para una comprensión más dinámica de los conceptos, te recomendamos este video explicativo.</p>
+                        <a href="https://www.youtube.com/watch?v=M3EFi_POhps" target="_blank" rel="noopener noreferrer" class="inline-block bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors">
+                            Ver Video: Proof of Stake (PoS) Explained
+                        </a>
+                    </div>
+                    <div class="bg-slate-800 text-white p-8 rounded-lg shadow-lg">
+                        <h3 class="text-2xl font-bold mb-4">Conclusión: El Futuro es Eficiente</h3>
+                        <p>Proof of Stake se está consolidando como el estándar de oro para el consenso en blockchain. Al reemplazar el poder computacional por la participación económica, no solo resuelve el masivo problema energético de POW, sino que también abre la puerta a una mayor escalabilidad y seguridad. POS es la tecnología que está haciendo posible una web descentralizada, rápida, barata y sostenible.</p>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // --- Lógica para el diagrama de pasos interactivo ---
+            const stepsContainer = document.getElementById('steps-container');
+            const descriptionContainer = document.getElementById('descriptions-container');
+            
+            stepsContainer.addEventListener('click', (e) => {
+                const stepButton = e.target.closest('.step-item');
+                if (!stepButton) return;
+
+                const stepNumber = stepButton.dataset.step;
+
+                // Actualizar botones
+                stepsContainer.querySelectorAll('.step-item').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                stepButton.classList.add('active');
+
+                // Actualizar descripciones
+                descriptionContainer.querySelectorAll('.step-description').forEach(desc => {
+                    desc.classList.add('hidden');
+                });
+                document.getElementById(`step-desc-${stepNumber}`).classList.remove('hidden');
+            });
+
+            // Activar el primer paso por defecto
+            stepsContainer.querySelector('.step-item[data-step="1"]').classList.add('active');
+            
+            // --- Lógica de Navegación ---
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('.nav-link');
+            const mobileNav = document.getElementById('mobile-nav');
+
+            const activateNavLink = (id) => {
+                navLinks.forEach(link => {
+                    link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
+                });
+                if (mobileNav.value !== id) {
+                    mobileNav.value = id;
+                }
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        activateNavLink(entry.target.id);
+                    }
+                });
+            }, { rootMargin: '-30% 0px -70% 0px', threshold: 0 });
+
+            sections.forEach(section => observer.observe(section));
+            
+            // Navegación en móvil
+            mobileNav.addEventListener('change', (e) => {
+                const sectionId = e.target.value;
+                document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
+            });
+
+
+            // --- Lógica del Gráfico (Chart.js) ---
+            const ctx = document.getElementById('posVsPowChart').getContext('2d');
+            const posVsPowChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Consumo Energético (% de POW)', 'Escalabilidad (TPS)', 'Costo de Hardware'],
+                    datasets: [{
+                        label: 'Proof of Stake',
+                        data: [0.05, 80, 20], 
+                        backgroundColor: 'rgba(79, 70, 229, 0.7)',
+                        borderColor: 'rgba(79, 70, 229, 1)',
+                        borderWidth: 1
+                    }, {
+                        label: 'Proof of Work',
+                        data: [100, 20, 90],
+                        backgroundColor: 'rgba(100, 116, 139, 0.7)',
+                        borderColor: 'rgba(100, 116, 139, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: false,
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    let value = context.raw;
+                                    if (context.label === 'Consumo Energético (% de POW)') {
+                                        label += `${value}%`;
+                                    } else {
+                                        const texts = {
+                                            'Escalabilidad (TPS)': ['Baja', 'Media', 'Alta', 'Muy Alta'],
+                                            'Costo de Hardware': ['Bajo', 'Medio', 'Alto', 'Muy Alto']
+                                        };
+                                        const textIndex = Math.floor(value / 25);
+                                        label += texts[context.label][textIndex];
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
