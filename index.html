@@ -200,7 +200,6 @@
             </div>
         </section>
 
-
         <!-- Section 2: Ventajas y Desventajas -->
         <section id="ventajas-desventajas" class="py-16 bg-white rounded-2xl">
             <div class="text-center mb-12">
@@ -329,73 +328,86 @@
             </div>
         </section>
 
-        <!-- Section 4: Variantes de PoS -->
-        <section id="variantes" class="py-16 bg-white rounded-2xl">
+        <!-- Section 4: Blockchain que usan PoS -->
+        <section id="variantes" class="py-16 bg-white rounded-2xl mb-12 px-14">
             <div class="text-center mb-12">
                 <h2 class="text-3xl font-bold text-gray-900">Blockchain que usan PoS</h2>
-                <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">No todos los PoS son iguales. Diferentes
-                    blockchains han desarrollado variaciones del protocolo para optimizar aspectos específicos como
-                    descentralización, velocidad o gobernanza.</p>
+                <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">Cada blockchain ha desarrollado su propia implementación de PoS, optimizando diferentes aspectos como velocidad, seguridad y descentralización.</p>
             </div>
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="card p-8">
-                    <div class="text-4xl mb-4">🗳️</div>
-                    <h3 class="text-xl font-bold mb-2">Delegated PoS (DPoS)</h3>
-                    <p class="text-gray-600 mb-3">Los poseedores de tokens <strong>votan por delegados</strong> que
-                        actúan como validadores en su nombre. Más democrático pero con menos validadores activos.</p>
-                    <div class="text-sm text-blue-600 font-semibold">Ejemplos: EOS, Tron, Cardano</div>
-                </div>
-                <div class="card p-8">
-                    <div class="text-4xl mb-4">🎯</div>
-                    <h3 class="text-xl font-bold mb-2">Nominated PoS (NPoS)</h3>
-                    <p class="text-gray-600 mb-3">Los nominadores <strong>seleccionan validadores confiables</strong> y
-                        comparten tanto recompensas como riesgos. Balancea participación y expertise técnico.</p>
-                    <div class="text-sm text-blue-600 font-semibold">Ejemplos: Polkadot, Kusama</div>
-                </div>
-                <div class="card p-8">
-                    <div class="text-4xl mb-4">💧</div>
-                    <h3 class="text-xl font-bold mb-2">Liquid PoS (LPoS)</h3>
-                    <p class="text-gray-600 mb-3">Permite <strong>delegar tokens sin bloquearlos</strong>, manteniendo
-                        liquidez mientras participas en consenso. Flexibilidad máxima para el staker.</p>
-                    <div class="text-sm text-blue-600 font-semibold">Ejemplos: Tezos, Algorand</div>
-                </div>
-                <div class="card p-8">
-                    <div class="text-4xl mb-4">🔄</div>
-                    <h3 class="text-xl font-bold mb-2">Hybrid PoS</h3>
-                    <p class="text-gray-600 mb-3">Combina PoS con otros mecanismos de consenso. <strong>Aprovecha lo
-                            mejor de múltiples enfoques</strong> para casos de uso específicos.</p>
-                    <div class="text-sm text-blue-600 font-semibold">Ejemplos: Decred</div>
-                </div>
-                <div class="card p-8">
-                    <div class="text-4xl mb-4">🏛️</div>
-                    <h3 class="text-xl font-bold mb-2">Bonded PoS (BPoS)</h3>
-                    <p class="text-gray-600 mb-3">Los validadores deben <strong>bloquear tokens por períodos
-                            largos</strong> con penalizaciones severas por mal comportamiento. Seguridad económica
-                        reforzada.</p>
-                    <div class="text-sm text-blue-600 font-semibold">Ejemplos: Cosmos, Binance Chain</div>
-                </div>
-                <div class="card p-8">
-                    <div class="text-4xl mb-4">⚡</div>
-                    <h3 class="text-xl font-bold mb-2">Pure PoS</h3>
-                    <p class="text-gray-600 mb-3">Implementación directa sin delegación. <strong>Todos los poseedores
-                            participan directamente</strong> en proporción a su stake. Simplicidad y pureza del
-                        concepto.</p>
-                    <div class="text-sm text-blue-600 font-semibold">Ejemplos: Algorand, Ethereum 2.0</div>
-                </div>
-                <!-- Nueva card PoS + PoH -->
-                <div class="card p-8 border-2 border-purple-200 bg-gradient-to-br from-purple-50 to-blue-50">
-                    <div class="text-4xl mb-4">🕒</div>
-                    <h3 class="text-xl font-bold mb-2">PoS + PoH (Proof of History)</h3>
-                    <p class="text-gray-600 mb-3">Combina PoS con <strong>ordenamiento temporal criptográfico</strong>. PoH crea un reloj descentralizado que permite mayor throughput sin sacrificar seguridad o descentralización.</p>
-                    <div class="text-sm text-purple-600 font-semibold mb-2">Ejemplos: Solana</div>
-                </div>
-            </div>
-            <div class="mt-12 text-center">
-                <div class="bg-blue-50 p-6 rounded-lg max-w-4xl mx-auto">
-                    <p class="text-blue-800"><strong>💡 Para Desarrolladores:</strong> La elección de variante depende
-                        de los trade-offs entre descentralización, velocidad, seguridad y complejidad de implementación.
-                        Cada variante optimiza diferentes aspectos según las necesidades del proyecto.</p>
-                </div>
+            
+            <!-- Tabla Comparativa -->
+            <div class="max-w-6xl mx-auto overflow-x-auto">
+                <table class="w-full bg-white shadow-lg rounded-xl border border-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="py-4 px-6 text-left font-bold text-gray-900 border-b">Blockchain</th>
+                            <th class="py-4 px-6 text-left font-bold text-gray-900 border-b">Mecanismo de Consenso</th>
+                            <th class="py-4 px-6 text-left font-bold text-gray-900 border-b">Descripción y Diferenciación del PoS Tradicional</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        <tr class="hover:bg-gray-50">
+                            <td class="py-4 px-6">
+                                <div class="flex items-center space-x-3">
+                                    <img src="https://cryptologos.cc/logos/ethereum-eth-logo.png" alt="Ethereum" class="w-8 h-8">
+                                    <span class="font-semibold text-blue-600">Ethereum</span>
+                                </div>
+                            </td>
+                            <td class="py-4 px-6">Gasper (PoS + Casper FFG)</td>
+                            <td class="py-4 px-6 text-gray-700">Combina PoS con un protocolo de finalidad (Casper FFG) y elección de cadena (LMD-GHOST). Validadores requieren 32 ETH y hay slashing.</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="py-4 px-6">
+                                <div class="flex items-center space-x-3">
+                                    <img src="https://cryptologos.cc/logos/cardano-ada-logo.png" alt="Cardano" class="w-8 h-8">
+                                    <span class="font-semibold text-green-600">Cardano</span>
+                                </div>
+                            </td>
+                            <td class="py-4 px-6">Ouroboros (PoS Científico)</td>
+                            <td class="py-4 px-6 text-gray-700">Epochs y slots. Stake pools para delegación. Investigación académica.</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="py-4 px-6">
+                                <div class="flex items-center space-x-3">
+                                    <img src="https://cryptologos.cc/logos/solana-sol-logo.png" alt="Solana" class="w-8 h-8">
+                                    <span class="font-semibold text-purple-600">Solana</span>
+                                </div>
+                            </td>
+                            <td class="py-4 px-6">Proof of History (PoH) + PoS</td>
+                            <td class="py-4 px-6 text-gray-700">Añade un 'reloj criptográfico' (PoH) para ordenar transacciones antes de validarlas con PoS. Ultra rápido (50k TPS).</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="py-4 px-6">
+                                <div class="flex items-center space-x-3">
+                                    <img src="https://cryptologos.cc/logos/polkadot-new-dot-logo.png" alt="Polkadot" class="w-8 h-8">
+                                    <span class="font-semibold text-red-600">Polkadot</span>
+                                </div>
+                            </td>
+                            <td class="py-4 px-6">Nominated PoS (NPoS)</td>
+                            <td class="py-4 px-6 text-gray-700">Los holders nominan validadores. Equilibra seguridad y descentralización con un número limitado de validadores (~600).</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="py-4 px-6">
+                                <div class="flex items-center space-x-3">
+                                    <img src="https://cryptologos.cc/logos/algorand-algo-logo.png" alt="Algorand" class="w-8 h-8">
+                                    <span class="font-semibold text-gray-800">Algorand</span>
+                                </div>
+                            </td>
+                            <td class="py-4 px-6">Pure PoS (PPoS)</td>
+                            <td class="py-4 px-6 text-gray-700">Selección aleatoria proporcional al stake, sin delegación ni slashing.</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="py-4 px-6">
+                                <div class="flex items-center space-x-3">
+                                    <img src="https://cryptologos.cc/logos/tezos-xtz-logo.png" alt="Tezos" class="w-8 h-8">
+                                    <span class="font-semibold text-indigo-600">Tezos</span>
+                                </div>
+                            </td>
+                            <td class="py-4 px-6">Liquid PoS (LPoS)</td>
+                            <td class="py-4 px-6 text-gray-700">Permite delegación flexible sin lockear monedas. Gobernanza on-chain y auto-actualizaciones.</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </section>
 
@@ -407,7 +419,7 @@
                     impulsa a muchas de las blockchains más grandes y innovadoras del mundo. También abordamos sus
                     posibles críticas.</p>
             </div>
-            <div class="grid lg:grid-cols-2 gap-12">
+            <div class="grid lg:grid-cols-2 gap-12 px-14">
                 <div>
                     <h3 class="text-2xl font-bold text-center lg:text-left mb-6">Adoptado por los Líderes</h3>
                     <div class="flex flex-wrap justify-center lg:justify-start gap-4 items-center">
