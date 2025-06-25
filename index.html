@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis Interactivo: Proof of Stake vs. Proof of Work</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Eco-Tech Harmony -->
+    <!-- Application Structure Plan: A single-page application with a top navigation bar for easy access to thematic sections. The core of the app is an interactive dashboard ("La Gran Comparación") where users can toggle between different metrics (Energy, Speed, Cost) to dynamically update a chart and associated text, allowing for direct, engaging comparison. This structure transforms the linear presentation into an exploratory experience, prioritizing user interaction and data visualization over a static slide-by-slide flow. The flow is: Hero -> Basics -> Side-by-Side Intro -> Interactive Comparison Dashboard -> Detailed PoS Mechanics -> Real World Use & Challenges -> Final Verdict. This was chosen to build knowledge progressively while allowing users to jump directly to the most compelling interactive content. -->
+    <!-- Visualization & Content Choices: The report's core comparison data is visualized using an interactive Chart.js bar chart. Goal: Compare. Method: Bar Chart on Canvas. Interaction: Users click buttons (Energy, Speed, Cost) to dynamically change the chart's data and context. Justification: This is more engaging than static images and allows for direct, user-driven exploration of the data, reinforcing the superiority of PoS. Other concepts like "Staking" or "Blockchain" are presented in styled HTML/Tailwind cards. Goal: Inform. Method: Structured HTML with icons (Unicode). Interaction: Simple, clear layout. Justification: Easily digestible for beginners. The "rich get richer" counter-argument uses an accordion. Goal: Organize/Explain. Method: HTML toggle. Interaction: Click to reveal. Justification: Hides complexity until the user is ready. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F7F4;
+            color: #333;
+        }
+        .nav-link {
+            transition: color 0.3s ease, border-bottom-color 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link:hover {
+            color: #27ae60;
+            border-bottom-color: #27ae60;
+        }
+        .btn-active {
+            background-color: #27ae60 !important;
+            color: white !important;
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.1);
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out;
+        }
+        .accordion-title.open + .accordion-content {
+            max-height: 500px;
+        }
+        .advantage-row {
+            background-color: #f0f9ff;
+            border-left: 4px solid #27ae60;
+        }
+        .disadvantage-row {
+            background-color: #fef2f2;
+            border-left: 4px solid #ef4444;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header & Navigation -->
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <span class="font-extrabold text-xl text-gray-800">Proof of Stake</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#fundamentos" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700">Fundamentos</a>
+                        <a href="#ventajas-desventajas" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700">Ventajas y Desventajas</a>
+                        <a href="#como-funciona" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700">¿Cómo Funciona?</a>
+                        <a href="#variantes" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700">Variantes de PoS</a>
+                        <a href="#mundo-real" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700">Mundo Real</a>
+                        <a href="#veredicto" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700">Veredicto</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        
+        <!-- Hero Section -->
+        <section class="text-center py-16">
+            <h1 class="text-4xl md:text-6xl font-extrabold text-gray-900 leading-tight">
+                <span class="block">Descubriendo el Poder de</span>
+                <span class="block text-green-600">Proof of Stake (PoS)</span>
+            </h1>
+            <p class="mt-6 max-w-2xl mx-auto text-lg text-gray-600">
+                Una guía interactiva para entender el futuro de la tecnología blockchain de forma clara y sencilla.
+            </p>
+        </section>
+
+        <!-- Section 1: Fundamentos -->
+        <section id="fundamentos" class="py-16">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-900">Los Fundamentos de Blockchain</h2>
+                <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">Antes de comparar, entendamos las bases. Aquí explicamos qué es una blockchain y por qué necesita un "consenso" para funcionar de forma segura y fiable.</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="card p-8 text-center">
+                    <div class="text-5xl mb-4">⛓️</div>
+                    <h3 class="text-xl font-bold mb-2">¿Qué es una Blockchain?</h3>
+                    <p class="text-gray-600">Imagina un **cuaderno de contabilidad digital** compartido entre miles de ordenadores. Cada página ("bloque") se añade a una cadena y no se puede borrar ni modificar jamás. Es un sistema a prueba de trampas.</p>
+                </div>
+                <div class="card p-8 text-center">
+                    <div class="text-5xl mb-4">✅</div>
+                    <h3 class="text-xl font-bold mb-2">¿Qué es el Consenso?</h3>
+                    <p class="text-gray-600">Es el **sistema de votación** de la red. Un conjunto de reglas para que todos se pongan de acuerdo sobre qué transacciones son válidas, asegurando que nadie haga trampa y que la información sea siempre correcta.</p>
+                </div>
+                <div class="card p-8 text-center">
+                    <div class="text-5xl mb-4">🔎</div>
+                    <h3 class="text-xl font-bold mb-2">¿Qué es "Validar"?</h3>
+                    <p class="text-gray-600">Es el acto de **verificar que una transacción es honesta**. Los validadores comprueban que quien envía dinero realmente lo tiene, antes de aprobarlo y añadirlo a un nuevo bloque en la cadena.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Ventajas y Desventajas -->
+        <section id="ventajas-desventajas" class="py-16 bg-white rounded-2xl">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-900">Ventajas y Desventajas de Proof of Stake</h2>
+                <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">Antes de profundizar en las comparaciones, es importante conocer las fortalezas y limitaciones de PoS. Una visión equilibrada y objetiva de esta tecnología.</p>
+            </div>
+            
+            <div class="max-w-6xl mx-auto">
+                <div class="grid lg:grid-cols-2 gap-8">
+                    <!-- Ventajas -->
+                    <div class="bg-white shadow-lg rounded-xl overflow-hidden border border-gray-100">
+                        <div class="bg-green-600 text-white p-6">
+                            <h3 class="text-2xl font-bold text-center flex items-center justify-center">
+                                <span class="mr-2">✅</span>
+                                Ventajas de PoS
+                            </h3>
+                        </div>
+                        <div class="p-6">
+                            <div class="space-y-4">
+                                <div class="advantage-row p-4 rounded-lg">
+                                    <h4 class="font-bold text-gray-900 mb-2">Eficiencia energética</h4>
+                                    <p class="text-gray-700">Consume mucho menos energía, ya que no requiere minería intensiva.</p>
+                                </div>
+                                <div class="advantage-row p-4 rounded-lg">
+                                    <h4 class="font-bold text-gray-900 mb-2">Escalabilidad</h4>
+                                    <p class="text-gray-700">Facilita la implementación de mejoras como sharding, que aumentan la capacidad de la red.</p>
+                                </div>
+                                <div class="advantage-row p-4 rounded-lg">
+                                    <h4 class="font-bold text-gray-900 mb-2">Seguridad económica</h4>
+                                    <p class="text-gray-700">Atacar la red requiere poseer una gran cantidad del token, lo cual es costoso y desincentiva el mal comportamiento.</p>
+                                </div>
+                                <div class="advantage-row p-4 rounded-lg">
+                                    <h4 class="font-bold text-gray-900 mb-2">Mayor descentralización (potencialmente)</h4>
+                                    <p class="text-gray-700">Permite a más participantes formar parte del consenso sin necesidad de costoso hardware de minería.</p>
+                                </div>
+                                <div class="advantage-row p-4 rounded-lg">
+                                    <h4 class="font-bold text-gray-900 mb-2">Recompensas sostenibles</h4>
+                                    <p class="text-gray-700">Las recompensas vienen principalmente de tarifas de transacción, no de emisión inflacionaria.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Desventajas -->
+                    <div class="bg-white shadow-lg rounded-xl overflow-hidden border border-gray-100">
+                        <div class="bg-red-600 text-white p-6">
+                            <h3 class="text-2xl font-bold text-center flex items-center justify-center">
+                                <span class="mr-2">⚠️</span>
+                                Desventajas de PoS
+                            </h3>
+                        </div>
+                        <div class="p-6">
+                            <div class="space-y-4">
+                                <div class="disadvantage-row p-4 rounded-lg">
+                                    <h4 class="font-bold text-gray-900 mb-2">Ventaja a los más ricos</h4>
+                                    <p class="text-gray-700">Los que tienen más tokens obtienen más poder y recompensas, lo que puede generar centralización.</p>
+                                </div>
+                                <div class="disadvantage-row p-4 rounded-lg">
+                                    <h4 class="font-bold text-gray-900 mb-2">Ataques del 51% son teóricamente posibles</h4>
+                                    <p class="text-gray-700">Si un actor acumula el 51% del stake, podría censurar o manipular transacciones.</p>
+                                </div>
+                                <div class="disadvantage-row p-4 rounded-lg">
+                                    <h4 class="font-bold text-gray-900 mb-2">Problemas de participación</h4>
+                                    <p class="text-gray-700">No todos los poseedores de tokens participan en el staking, lo que reduce la seguridad efectiva.</p>
+                                </div>
+                                <div class="disadvantage-row p-4 rounded-lg">
+                                    <h4 class="font-bold text-gray-900 mb-2">Complejidad técnica</h4>
+                                    <p class="text-gray-700">Requiere una implementación más compleja y puede ser más difícil de auditar o entender.</p>
+                                </div>
+                                <div class="disadvantage-row p-4 rounded-lg">
+                                    <h4 class="font-bold text-gray-900 mb-2">Nothing at Stake</h4>
+                                    <p class="text-gray-700">En blockchains mal diseñadas, los validadores podrían validar múltiples cadenas sin costo, afectando el consenso (aunque esto ya se mitiga en sistemas modernos).</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Como funciona -->
+        <section id="como-funciona" class="py-16">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-900">¿Cómo Funciona Proof of Stake?</h2>
+                <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">PoS no se basa en la fuerza bruta, sino en la confianza e inversión. Estos son los tres pilares que lo hacen funcionar de manera tan eficiente y segura.</p>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="card p-8">
+                    <div class="text-4xl mb-4">💰</div>
+                    <h3 class="text-xl font-bold mb-2">1. Staking (Apostar)</h3>
+                    <p class="text-gray-600">Es el acto de **bloquear tus monedas** como garantía. Es tu "inversión" en la red. A cambio de este compromiso, tienes la oportunidad de validar transacciones y ganar recompensas.</p>
+                </div>
+                <div class="card p-8">
+                    <div class="text-4xl mb-4">🧑‍⚖️</div>
+                    <h3 class="text-xl font-bold mb-2">2. Validadores</h3>
+                    <p class="text-gray-600">Son los usuarios que han hecho "staking" y son elegidos para **verificar transacciones y crear nuevos bloques**. En lugar de competir, son seleccionados en una especie de lotería donde más monedas apostadas significa más boletos.</p>
+                </div>
+                 <div class="card p-8">
+                    <div class="text-4xl mb-4">🎁</div>
+                    <h3 class="text-xl font-bold mb-2">3. Recompensas</h3>
+                    <p class="text-gray-600">Son el **pago que reciben los validadores** por su trabajo honesto. Si un validador intenta hacer trampa, puede perder una parte o la totalidad de sus monedas apostadas (su "depósito de seguridad").</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Variantes de PoS -->
+        <section id="variantes" class="py-16 bg-white rounded-2xl">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-900">Variantes de Proof of Stake</h2>
+                <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">No todos los PoS son iguales. Diferentes blockchains han desarrollado variaciones del protocolo para optimizar aspectos específicos como descentralización, velocidad o gobernanza.</p>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="card p-8">
+                    <div class="text-4xl mb-4">🗳️</div>
+                    <h3 class="text-xl font-bold mb-2">Delegated PoS (DPoS)</h3>
+                    <p class="text-gray-600 mb-3">Los poseedores de tokens <strong>votan por delegados</strong> que actúan como validadores en su nombre. Más democrático pero con menos validadores activos.</p>
+                    <div class="text-sm text-blue-600 font-semibold">Ejemplos: EOS, Tron, Cardano</div>
+                </div>
+                <div class="card p-8">
+                    <div class="text-4xl mb-4">🎯</div>
+                    <h3 class="text-xl font-bold mb-2">Nominated PoS (NPoS)</h3>
+                    <p class="text-gray-600 mb-3">Los nominadores <strong>seleccionan validadores confiables</strong> y comparten tanto recompensas como riesgos. Balancea participación y expertise técnico.</p>
+                    <div class="text-sm text-blue-600 font-semibold">Ejemplos: Polkadot, Kusama</div>
+                </div>
+                <div class="card p-8">
+                    <div class="text-4xl mb-4">💧</div>
+                    <h3 class="text-xl font-bold mb-2">Liquid PoS (LPoS)</h3>
+                    <p class="text-gray-600 mb-3">Permite <strong>delegar tokens sin bloquearlos</strong>, manteniendo liquidez mientras participas en consenso. Flexibilidad máxima para el staker.</p>
+                    <div class="text-sm text-blue-600 font-semibold">Ejemplos: Tezos, Algorand</div>
+                </div>
+                <div class="card p-8">
+                    <div class="text-4xl mb-4">🔄</div>
+                    <h3 class="text-xl font-bold mb-2">Hybrid PoS</h3>
+                    <p class="text-gray-600 mb-3">Combina PoS con otros mecanismos de consenso. <strong>Aprovecha lo mejor de múltiples enfoques</strong> para casos de uso específicos.</p>
+                    <div class="text-sm text-blue-600 font-semibold">Ejemplos: Ethereum 2.0, Decred</div>
+                </div>
+                <div class="card p-8">
+                    <div class="text-4xl mb-4">🏛️</div>
+                    <h3 class="text-xl font-bold mb-2">Bonded PoS (BPoS)</h3>
+                    <p class="text-gray-600 mb-3">Los validadores deben <strong>bloquear tokens por períodos largos</strong> con penalizaciones severas por mal comportamiento. Seguridad económica reforzada.</p>
+                    <div class="text-sm text-blue-600 font-semibold">Ejemplos: Cosmos, Binance Chain</div>
+                </div>
+                <div class="card p-8">
+                    <div class="text-4xl mb-4">⚡</div>
+                    <h3 class="text-xl font-bold mb-2">Pure PoS</h3>
+                    <p class="text-gray-600 mb-3">Implementación directa sin delegación. <strong>Todos los poseedores participan directamente</strong> en proporción a su stake. Simplicidad y pureza del concepto.</p>
+                    <div class="text-sm text-blue-600 font-semibold">Ejemplos: Algorand, Solana</div>
+                </div>
+            </div>
+            <div class="mt-12 text-center">
+                <div class="bg-blue-50 p-6 rounded-lg max-w-4xl mx-auto">
+                    <p class="text-blue-800"><strong>💡 Para Desarrolladores:</strong> La elección de variante depende de los trade-offs entre descentralización, velocidad, seguridad y complejidad de implementación. Cada variante optimiza diferentes aspectos según las necesidades del proyecto.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Mundo Real y Desafíos -->
+        <section id="mundo-real" class="py-16 bg-gray-50 rounded-2xl">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-900">PoS en el Mundo Real y sus Desafíos</h2>
+                <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">PoS no es solo teoría; es la tecnología que impulsa a muchas de las blockchains más grandes y innovadoras del mundo. También abordamos sus posibles críticas.</p>
+            </div>
+            <div class="grid lg:grid-cols-2 gap-12">
+                <div>
+                    <h3 class="text-2xl font-bold text-center lg:text-left mb-6">Adoptado por los Líderes</h3>
+                    <div class="flex flex-wrap justify-center lg:justify-start gap-4 items-center">
+                         <span class="bg-white p-3 rounded-full shadow-md font-bold text-lg">Ethereum</span>
+                         <span class="bg-white p-3 rounded-full shadow-md font-bold text-lg">Cardano</span>
+                         <span class="bg-white p-3 rounded-full shadow-md font-bold text-lg">Solana</span>
+                         <span class="bg-white p-3 rounded-full shadow-md font-bold text-lg">Polkadot</span>
+                    </div>
+                     <p class="mt-6 text-gray-600">Para los usuarios, esto significa transacciones más rápidas, comisiones mucho más bajas y la tranquilidad de usar una tecnología sostenible.</p>
+                </div>
+                <div>
+                     <h3 class="text-2xl font-bold text-center lg:text-left mb-6">¿Es Perfecto? Una Mirada Honesta</h3>
+                     <div class="bg-white rounded-lg shadow">
+                         <div id="accordion-title" class="accordion-title p-6 cursor-pointer flex justify-between items-center">
+                            <h4 class="font-semibold text-lg">Crítica: ¿"Los ricos se hacen más ricos"?</h4>
+                            <span class="transform transition-transform duration-300">▼</span>
+                         </div>
+                         <div class="accordion-content px-6 pb-6 text-gray-600">
+                            <p><strong>La Preocupación:</strong> Se teme que los grandes poseedores de monedas acaparen las recompensas, centralizando el poder.</p>
+                            <p class="mt-4"><strong>La Solución Real:</strong> Los **Pools de Staking**. Permiten a usuarios pequeños juntar sus monedas para competir como un gran validador y repartir las ganancias. Esto democratiza el acceso, permitiendo que cualquiera participe y gane.</p>
+                         </div>
+                     </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Section 6: Veredicto -->
+        <section id="veredicto" class="py-16">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-900">El Veredicto Final</h2>
+                <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">Viendo toda la evidencia, la elección es clara. PoS representa un salto evolutivo fundamental para la tecnología blockchain.</p>
+            </div>
+
+            <!-- La Gran Comparación (Movido aquí) -->
+            <div class="mb-16 bg-white rounded-2xl p-8">
+                <div class="text-center mb-12">
+                    <h3 class="text-2xl font-bold text-gray-900">La Gran Comparación: PoS vs. PoW</h3>
+                    <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">Compara las dos tecnologías en las métricas más importantes. Haz clic en cada botón para ver cómo se comparan visualmente.</p>
+                </div>
+                
+                <div class="grid lg:grid-cols-2 gap-12 items-center">
+                    <div class="text-center lg:text-left">
+                        <div class="flex justify-center lg:justify-start space-x-2 mb-8">
+                            <button id="btn-energy" class="comparison-btn btn-active px-4 py-2 rounded-full font-semibold bg-gray-200 text-gray-800 transition">⚡ Energía</button>
+                            <button id="btn-speed" class="comparison-btn px-4 py-2 rounded-full font-semibold bg-gray-200 text-gray-800 transition">⏱️ Velocidad</button>
+                            <button id="btn-cost" class="comparison-btn px-4 py-2 rounded-full font-semibold bg-gray-200 text-gray-800 transition">💸 Costo</button>
+                        </div>
+                        <div id="comparison-text">
+                            <h4 class="text-xl font-bold text-gray-900 mb-4">Consumo Energético</h4>
+                            <p class="text-gray-600">La diferencia es gigantesca. PoW consume una cantidad de electricidad comparable a países enteros. PoS es increíblemente eficiente.</p>
+                            <div class="mt-6 p-4 bg-green-50 rounded-lg">
+                                <p class="font-semibold text-green-800">Dato Clave: La red Ethereum redujo su consumo energético en un <span class="text-xl font-bold">99.95%</span> al pasarse a PoS. ¡Es la diferencia entre alimentar a Argentina y alimentar un pequeño pueblo!</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="chart-container">
+                            <canvas id="comparisonChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabla Comparativa -->
+            <div class="max-w-4xl mx-auto">
+                <div class="bg-white shadow-lg rounded-xl overflow-hidden">
+                    <div class="p-6">
+                        <h3 class="text-center font-bold text-2xl mb-6">PoW vs. PoS: Resumen</h3>
+                        <table class="w-full text-left">
+                            <thead>
+                                <tr class="border-b">
+                                    <th class="py-3 px-4 font-semibold">Característica</th>
+                                    <th class="py-3 px-4 font-semibold text-center">Proof of Work (PoW)</th>
+                                    <th class="py-3 px-4 font-semibold text-center">Proof of Stake (PoS)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b">
+                                    <td class="py-3 px-4">Consumo Energético</td>
+                                    <td class="py-3 px-4 text-center text-2xl">❌</td>
+                                    <td class="py-3 px-4 text-center text-2xl">✅</td>
+                                </tr>
+                                <tr class="border-b">
+                                    <td class="py-3 px-4">Velocidad</td>
+                                    <td class="py-3 px-4 text-center text-2xl">❌</td>
+                                    <td class="py-3 px-4 text-center text-2xl">✅</td>
+                                </tr>
+                                 <tr class="border-b">
+                                    <td class="py-3 px-4">Costo por Transacción</td>
+                                    <td class="py-3 px-4 text-center text-2xl">❌</td>
+                                    <td class="py-3 px-4 text-center text-2xl">✅</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-3 px-4">Acceso para Usuarios</td>
+                                    <td class="py-3 px-4 text-center text-2xl">❌</td>
+                                    <td class="py-3 px-4 text-center text-2xl">✅</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="mt-8 text-center p-8 bg-gray-900 text-white rounded-lg">
+                    <p class="text-xl"><strong>Analogía Final:</strong> PoW es como un motor V8 de primera generación: revolucionario, pero ruidoso, ineficiente y contaminante. PoS es como un **motor eléctrico moderno**: silencioso, eficiente y la base para un futuro sostenible.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+    
+    <footer class="bg-gray-800 text-white text-center py-6">
+        <p>&copy; 2025 Análisis Interactivo Blockchain. Creado para facilitar el aprendizaje.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const ctx = document.getElementById('comparisonChart').getContext('2d');
+            let comparisonChart;
+
+            const comparisonData = {
+                energy: {
+                    title: 'Consumo Energético',
+                    description: 'La diferencia es gigantesca. PoW consume una cantidad de electricidad comparable a países enteros. PoS es increíblemente eficiente.',
+                    fact: 'Dato Clave: La red Ethereum redujo su consumo energético en un <span class="text-xl font-bold">99.95%</span> al pasarse a PoS. ¡Es la diferencia entre alimentar a Argentina y alimentar un pequeño pueblo!',
+                    labels: ['Proof of Work', 'Proof of Stake'],
+                    data: [100, 0.05], // Representación porcentual para el impacto visual
+                    backgroundColor: ['#e67e22', '#27ae60'],
+                    label: 'Consumo Relativo (%)'
+                },
+                speed: {
+                    title: 'Velocidad de Transacción',
+                    description: 'PoS es órdenes de magnitud más rápido, permitiendo que las transacciones se confirmen en segundos en lugar de minutos u horas.',
+                    fact: 'Dato Clave: Una transacción en una red PoS como Solana o Ethereum puede ser final en <span class="text-xl font-bold">~15 segundos</span>, mientras que en Bitcoin (PoW) puede tardar hasta 60 minutos para una confirmación segura.',
+                    labels: ['PoW (minutos)', 'PoS (segundos)'],
+                    data: [10, 15 / 60], // Dato en minutos para la comparación
+                    backgroundColor: ['#e67e22', '#27ae60'],
+                    label: 'Tiempo de Confirmación (minutos)'
+                },
+                cost: {
+                    title: 'Costo por Transacción',
+                    description: 'La eficiencia de PoS se traduce en comisiones drásticamente más bajas, haciendo la tecnología accesible para el uso diario.',
+                    fact: 'Dato Clave: Mientras una transacción en Bitcoin (PoW) puede costar <span class="text-xl font-bold">varios dólares</span>, una transacción similar en una red PoS puede costar solo unos <span class="text-xl font-bold">pocos centavos</span>.',
+                    labels: ['Proof of Work', 'Proof of Stake'],
+                    data: [10, 0.10], // Costo promedio en USD
+                    backgroundColor: ['#e67e22', '#27ae60'],
+                    label: 'Costo Promedio ($USD)'
+                }
+            };
+
+            const comparisonTextElement = document.getElementById('comparison-text');
+            const buttons = document.querySelectorAll('.comparison-btn');
+
+            function updateChart(metric) {
+                const data = comparisonData[metric];
+                
+                comparisonTextElement.innerHTML = `
+                    <h4 class="text-xl font-bold text-gray-900 mb-4">${data.title}</h4>
+                    <p class="text-gray-600">${data.description}</p>
+                    <div class="mt-6 p-4 bg-green-50 rounded-lg">
+                        <p class="font-semibold text-green-800">${data.fact}</p>
+                    </div>
+                `;
+
+                if (comparisonChart) {
+                    comparisonChart.destroy();
+                }
+
+                comparisonChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: data.labels,
+                        datasets: [{
+                            label: data.label,
+                            data: data.data,
+                            backgroundColor: data.backgroundColor,
+                            borderColor: data.backgroundColor.map(c => c + 'B3'),
+                            borderWidth: 1,
+                            barPercentage: 0.6,
+                            categoryPercentage: 0.7
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        if (context.parsed.x !== null) {
+                                            label += new Intl.NumberFormat('es-ES', { style: 'decimal' }).format(context.parsed.x);
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: data.label,
+                                    font: {
+                                        weight: 'bold'
+                                    }
+                                }
+                            },
+                             y: {
+                                ticks: {
+                                    font: {
+                                        size: 14,
+                                        weight: '500'
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            buttons.forEach(button => {
+                button.addEventListener('click', () => {
+                    buttons.forEach(btn => btn.classList.remove('btn-active'));
+                    button.classList.add('btn-active');
+                    const metric = button.id.replace('btn-', '');
+                    updateChart(metric);
+                });
+            });
+
+            // Initial chart
+            updateChart('energy');
+            
+            // Accordion logic
+            const accordionTitle = document.getElementById('accordion-title');
+            accordionTitle.addEventListener('click', () => {
+                 accordionTitle.classList.toggle('open');
+                 const icon = accordionTitle.querySelector('span');
+                 icon.classList.toggle('rotate-180');
+            });
+
+            // Smooth scrolling for nav links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
